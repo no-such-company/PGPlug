@@ -1,7 +1,7 @@
 # PGPlug
 A PGP plugin for Java project to make the use of PGP painless and easy.
 
-![Test](https://github.com/no-such-company/PGPlug/workflows/Test/badge.svg?branch=main)
+![Test](https://github.com/no-such-company/PGPlug/workflows/Test/badge.svg?branch=main)![Java CI with Maven](https://github.com/no-such-company/PGPlug/workflows/Java%20CI%20with%20Maven/badge.svg)
 
 This package uses Bouncycastel for PGP encryption.
 Due to the high demands on PGP it is sometimes not possible to realize projects without high expertise.
