@@ -13,11 +13,20 @@ import java.io.ByteArrayOutputStream;
 public class KeyPairPGP {
     private byte[] privateKey;
     private byte[] publicKey;
+    private char[] pass;
+
+    public KeyPairPGP(char[] pass) {
+        ByteArrayOutputStream privateKey = new ByteArrayOutputStream();
+        ByteArrayOutputStream publicKey = new ByteArrayOutputStream();
+        PGPUtils.generateKeyPair(privateKey, publicKey, pass);
+        this.privateKey = privateKey.toByteArray();
+        this.publicKey = publicKey.toByteArray();
+    }
 
     public KeyPairPGP() {
         ByteArrayOutputStream privateKey = new ByteArrayOutputStream();
         ByteArrayOutputStream publicKey = new ByteArrayOutputStream();
-        PGPUtils.generateKeyPair(privateKey, publicKey);
+        PGPUtils.generateKeyPair(privateKey, publicKey, "".toCharArray());
         this.privateKey = privateKey.toByteArray();
         this.publicKey = publicKey.toByteArray();
     }
