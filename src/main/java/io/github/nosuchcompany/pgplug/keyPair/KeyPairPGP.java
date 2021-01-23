@@ -1,6 +1,6 @@
-package com.nosuchcompany.pgplug.keyPair;
+package io.github.nosuchcompany.pgplug.keyPair;
 
-import com.nosuchcompany.pgplug.utils.PGPUtils;
+import io.github.nosuchcompany.pgplug.utils.PGPUtils;
 import org.bouncycastle.openpgp.PGPPublicKey;
 
 import java.io.ByteArrayOutputStream;

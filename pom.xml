@@ -4,14 +4,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.nosuchcompany</groupId>
+    <groupId>io.github.nosuchcompany</groupId>
     <artifactId>pgplug</artifactId>
-    <version>0.5.0</version>
+    <version>0.5.1-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>15</maven.compiler.source>
         <maven.compiler.target>15</maven.compiler.target>
     </properties>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>9</version>
+    </parent>
+
 
     <dependencies>
         <dependency>

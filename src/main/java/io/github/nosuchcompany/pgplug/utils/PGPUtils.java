@@ -1,4 +1,4 @@
-package com.nosuchcompany.pgplug.utils;
+package io.github.nosuchcompany.pgplug.utils;
 
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.HashAlgorithmTags;

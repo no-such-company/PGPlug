@@ -1,6 +1,6 @@
-package com.nosuchcompany.pgplug.utils;
+package io.github.nosuchcompany.pgplug.utils;
 
-import com.nosuchcompany.pgplug.keyPair.KeyPairPGP;
+import io.github.nosuchcompany.pgplug.keyPair.KeyPairPGP;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSecretKey;
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static com.nosuchcompany.pgplug.utils.PGPUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
@@ -66,7 +65,7 @@ class PGPUtilsTest {
 
         OutputStream privateOut = new FileOutputStream(privateKeyDest);
         OutputStream publicOut = new FileOutputStream(publicKeyDest);
-        generateKeyPair(privateOut, publicOut, pass);
+        PGPUtils.generateKeyPair(privateOut, publicOut, pass);
 
         assertTrue(new File(privateKeyDest).exists());
         assertTrue(new File(publicKeyDest).exists());
@@ -79,15 +78,15 @@ class PGPUtilsTest {
 
         OutputStream privateOut = new FileOutputStream(privateKeyDest);
         OutputStream publicOut = new FileOutputStream(publicKeyDest);
-        generateKeyPair(privateOut, publicOut, pass);
+        PGPUtils.generateKeyPair(privateOut, publicOut, pass);
 
         FileInputStream publicKeyInputStream = new FileInputStream(publicKeyDest);
-        PGPPublicKey publicKeyRing = readPublicKey(publicKeyInputStream);
+        PGPPublicKey publicKeyRing = PGPUtils.readPublicKey(publicKeyInputStream);
         assertTrue(publicKeyRing.isEncryptionKey());
         assertEquals(publicKeyRing.getBitStrength(), 1024);
 
         FileInputStream privateKeyInputStream = new FileInputStream(privateKeyDest);
-        PGPSecretKey privateKeyRing = readSecretKey(privateKeyInputStream);
+        PGPSecretKey privateKeyRing = PGPUtils.readSecretKey(privateKeyInputStream);
         assertEquals(privateKeyRing.getPublicKey().getBitStrength(), 1024);
         assertEquals(privateKeyRing.getEncoded().length, 681);
         
