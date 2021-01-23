@@ -6,7 +6,7 @@
 
     <groupId>com.nosuchcompany</groupId>
     <artifactId>pgplug</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.5.0</version>
 
     <properties>
         <maven.compiler.source>15</maven.compiler.source>

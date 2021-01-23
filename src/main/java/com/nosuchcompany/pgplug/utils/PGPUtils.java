@@ -26,8 +26,6 @@ public class PGPUtils {
 
     private static final String identity = "identity";
 
-    private static final char[] passPhrase = "password".toCharArray();
-
     private static final boolean withIntegrityCheck = true;
 
     static {
@@ -40,7 +38,7 @@ public class PGPUtils {
         }
     }
 
-    public static final void generateKeyPair(OutputStream privateOut, OutputStream publicOut){
+    public static final void generateKeyPair(OutputStream privateOut, OutputStream publicOut, char[] passPhrase){
         try {
             KeyPair pair = kpg.generateKeyPair();
 
@@ -48,8 +46,11 @@ public class PGPUtils {
                 privateOut = new ArmoredOutputStream(privateOut);
             }
 
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.YEAR, 5);
+
             PGPDigestCalculator sha1Calc = new JcaPGPDigestCalculatorProviderBuilder().build().get(HashAlgorithmTags.SHA1);
-            PGPKeyPair keyPair = new JcaPGPKeyPair(PGPPublicKey.RSA_GENERAL, pair, new Date());
+            PGPKeyPair keyPair = new JcaPGPKeyPair(PGPPublicKey.RSA_GENERAL, pair, cal.getTime());
             PGPSecretKey secretKey = new PGPSecretKey(PGPSignature.DEFAULT_CERTIFICATION,
                     keyPair,
                     identity,
@@ -174,13 +175,13 @@ public class PGPUtils {
     /**
      * decrypt the passPhraseed in message stream
      */
-    public static void decrypt(byte[] encryptedData, byte[] key, OutputStream fOut) {
-        decrypt(new ByteArrayInputStream(encryptedData), new ByteArrayInputStream(key), fOut);
+    public static void decrypt(byte[] encryptedData, byte[] key, OutputStream fOut, char[] passPhrase) {
+        decrypt(new ByteArrayInputStream(encryptedData), new ByteArrayInputStream(key), fOut, passPhrase);
     }
 
-    public static byte[] decrypt(InputStream encrypted, InputStream privateKeyIn) throws IOException{
+    public static byte[] decrypt(InputStream encrypted, InputStream privateKeyIn, char[] passPhrase) throws IOException{
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        decrypt(encrypted, privateKeyIn, bOut);
+        decrypt(encrypted, privateKeyIn, bOut, passPhrase);
         return bOut.toByteArray();
     }
 
@@ -197,7 +198,8 @@ public class PGPUtils {
     public static void decrypt(
             InputStream encrypted,
             InputStream privateKeyIn,
-            OutputStream fOut)
+            OutputStream fOut,
+            char[] passPhrase)
             {
 
         try {
