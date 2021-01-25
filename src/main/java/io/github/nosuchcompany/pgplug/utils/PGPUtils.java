@@ -90,8 +90,6 @@ public class PGPUtils {
      *
      * @param input data stream containing the public key data
      * @return the first public key found.
-     * @throws IOException
-     * @throws PGPException
      */
     public static PGPPublicKey readPublicKey(InputStream input){
         PGPPublicKeyRingCollection pgpPub = null;
@@ -129,7 +127,7 @@ public class PGPUtils {
      * @throws IOException  on a problem with using the input stream.
      * @throws PGPException if there is an issue parsing the input stream.
      */
-    static PGPSecretKey readSecretKey(InputStream input) throws IOException, PGPException {
+    public static PGPSecretKey readSecretKey(InputStream input) throws IOException, PGPException {
         PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(
                 PGPUtil.getDecoderStream(input), new JcaKeyFingerprintCalculator());
 
@@ -191,9 +189,6 @@ public class PGPUtils {
      * @param encrypted  The message to be decrypted.
      * @param privateKeyIn  private key InputStream.
      * @param fOut Clear text as a byte array.
-     *
-     * @return void
-     * @exception IOException
      */
     public static void decrypt(
             InputStream encrypted,
@@ -295,9 +290,6 @@ public class PGPUtils {
      * @param publicKeys Public Key Collection.  This method assumes that the
      *                   key is a public key
      * @param out        store encrypted data.
-     *
-     * @return void.
-     * @exception IOException
      */
     public static void encrypt(
             OutputStream out,
@@ -310,12 +302,17 @@ public class PGPUtils {
         }
 
         try {
-            PGPEncryptedDataGenerator cPk = new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(PGPEncryptedData.CAST5).setWithIntegrityPacket(withIntegrityCheck).setSecureRandom(new SecureRandom()).setProvider("BC"));
+            PGPEncryptedDataGenerator cPk = new
+                    PGPEncryptedDataGenerator(
+                            new JcePGPDataEncryptorBuilder(PGPEncryptedData.CAST5)
+                                    .setWithIntegrityPacket(withIntegrityCheck)
+                                    .setSecureRandom(new SecureRandom())
+                                    .setProvider("BC")
+            );
 
             for (PGPPublicKey publicKey : publicKeys) {
                 cPk.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(publicKey).setProvider("BC"));
             }
-
             OutputStream cOut = cPk.open(out, new byte[1 << 16]);
 
             PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(PGPCompressedData.ZIP);

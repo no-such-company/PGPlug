@@ -88,3 +88,35 @@ PGPUtils.decrypt(
         pass);
 
 ```
+
+### signData
+
+A file can be signed with a private key.
+If you are lazy you can simply overwrite the encrypted file with the signed encrypted file
+
+```java
+
+SignedFileProcessor.signFile(
+                encryptedFileDest, //a String with the destination of the encryted file wich has to be signed
+                new FileInputStream(privateKeyDest), //The InputStream of the private (secret) key
+                new FileOutputStream(encryptedSignedFileDest), //The Outputstream of the signed file
+                pass, // the char[] of the secret key password
+                true amor (leave true if you got no idea)
+        );
+
+```
+
+### verfiy signed file
+
+The `verifyFile()` check the signature against a public key.
+It returns a boolean
+
+```java
+
+
+SignedFileProcessor.verifyFile(
+        new FileInputStream(encryptedSignedFileDestination),
+        new FileInputStream(publicKey_of_the_sign)
+        );
+
+```
