@@ -106,7 +106,7 @@ SignedFileProcessor.signFile(
 
 ```
 
-### verfiy signed file
+### verify signed file
 
 The `verifyFile()` check the signature against a public key.
 It returns a boolean
