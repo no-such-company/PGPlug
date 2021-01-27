@@ -15,7 +15,7 @@ Maven:
 <dependency>
   <groupId>io.github.no-such-company</groupId>
   <artifactId>pgplug</artifactId>
-  <version>21.1.25-SNAPSHOT</version>
+  <version>21.2</version>
 </dependency>
 ```
 Gradle:
@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'io.github.no-such-company:pgplug:21.1.25-SNAPSHOT'
+	implementation 'io.github.no-such-company:pgplug:21.2'
 }
 ```
 
