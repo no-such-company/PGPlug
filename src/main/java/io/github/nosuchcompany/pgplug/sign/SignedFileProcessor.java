@@ -133,5 +133,68 @@ public class SignedFileProcessor {
         }
     }
 
+    /**
+     * Generate an encapsulated signed file.
+     *
+     * @param fileName  the name of the file, that file that should be signed
+     * @param pgpSec PrivateKeyRing
+     * @param out the outputStream of the file that should be signed
+     * @param pass the password wrt the secrect key
+     * @param armor should be true if you have no idea what you are doing
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     * @throws PGPException
+     * @throws SignatureException
+     */
+    public static void signFile(
+            String fileName,
+            PGPSecretKey pgpSec,
+            OutputStream out,
+            char[] pass,
+            boolean armor)
+            throws IOException, NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
+        if (armor) {
+            out = new ArmoredOutputStream(out);
+        }
+        PGPPrivateKey pgpPrivKey = pgpSec.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(pass));
+        PGPSignatureGenerator sGen = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), PGPUtil.SHA1).setProvider("BC"));
+
+        sGen.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
+
+        Iterator it = pgpSec.getPublicKey().getUserIDs();
+        if (it.hasNext()) {
+            PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
+
+            spGen.setSignerUserID(false, (String) it.next());
+            sGen.setHashedSubpackets(spGen.generate());
+        }
+
+        PGPCompressedDataGenerator cGen = new PGPCompressedDataGenerator(
+                PGPCompressedData.ZLIB);
+
+        BCPGOutputStream bOut = new BCPGOutputStream(cGen.open(out));
+
+        sGen.generateOnePassVersion(false).encode(bOut);
+
+        File file = new File(fileName);
+        PGPLiteralDataGenerator lGen = new PGPLiteralDataGenerator();
+        OutputStream lOut = lGen.open(bOut, PGPLiteralData.BINARY, file);
+        FileInputStream fIn = new FileInputStream(file);
+        int ch;
+
+        while ((ch = fIn.read()) >= 0) {
+            lOut.write(ch);
+            sGen.update((byte) ch);
+        }
+
+        lGen.close();
+        sGen.generate().encode(bOut);
+        cGen.close();
+        if (armor) {
+            out.close();
+        }
+    }
+
 
 }
