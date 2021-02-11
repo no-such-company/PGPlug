@@ -8,6 +8,26 @@ Due to the high demands on PGP it is sometimes not possible to realize projects 
 
 Swen Kalski designed this package for the BlackChamber server and makes it universally usable for JAVA and Android projects with this repository.
 
+## Install
+
+Maven:
+```java
+<dependency>
+  <groupId>io.github.no-such-company</groupId>
+  <artifactId>pgplug</artifactId>
+  <version>21.2</version>
+</dependency>
+```
+Gradle:
+```java
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'io.github.no-such-company:pgplug:21.2'
+}
+```
 
 ## Basic usage
 
