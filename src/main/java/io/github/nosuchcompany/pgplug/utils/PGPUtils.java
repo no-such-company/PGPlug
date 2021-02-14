@@ -58,7 +58,7 @@ public class PGPUtils {
                     null,
                     null,
                     new JcaPGPContentSignerBuilder(keyPair.getPublicKey().getAlgorithm(), HashAlgorithmTags.SHA1),
-                    new JcePBESecretKeyEncryptorBuilder(PGPEncryptedData.CAST5, sha1Calc).setProvider("BC").build(passPhrase));
+                    new JcePBESecretKeyEncryptorBuilder(PGPEncryptedData.AES_256, sha1Calc).setProvider("BC").build(passPhrase));
 
             secretKey.encode(privateOut);
 
@@ -304,7 +304,7 @@ public class PGPUtils {
         try {
             PGPEncryptedDataGenerator cPk = new
                     PGPEncryptedDataGenerator(
-                            new JcePGPDataEncryptorBuilder(PGPEncryptedData.CAST5)
+                            new JcePGPDataEncryptorBuilder(PGPEncryptedData.AES_256)
                                     .setWithIntegrityPacket(withIntegrityCheck)
                                     .setSecureRandom(new SecureRandom())
                                     .setProvider("BC")
