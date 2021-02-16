@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'io.github.no-such-company:pgplug:21.3'
+	implementation 'io.github.no-such-company:pgplug:21.5'
 }
 ```
 
