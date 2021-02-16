@@ -15,7 +15,7 @@ Maven:
 <dependency>
   <groupId>io.github.no-such-company</groupId>
   <artifactId>pgplug</artifactId>
-  <version>21.3</version>
+  <version>21.5</version>
 </dependency>
 ```
 Gradle:
