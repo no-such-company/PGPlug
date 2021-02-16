@@ -10,8 +10,7 @@ import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import static io.github.nosuchcompany.pgplug.utils.PGPUtils.encrypt;
-import static io.github.nosuchcompany.pgplug.utils.PGPUtils.readPublicKey;
+import static io.github.nosuchcompany.pgplug.utils.PGPUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SignedFileProcessorTest {
@@ -58,6 +57,47 @@ class SignedFileProcessorTest {
                 true
         );
         assertTrue(SignedFileProcessor.verifyFile(new FileInputStream(encryptedSignedFileDest),new FileInputStream(publicKeyDest)));
+    }
+
+    @Test
+    void testSigned_alternateStreamedHappyPath() throws Exception {
+        String privateKeyDest = TEST_FOLDER + "/testSigned_HappyPath.prv";
+        String publicKeyDest = TEST_FOLDER + "/testSigned_HappyPath.pub";
+        String encryptedFileDest = TEST_FOLDER + "/testSigned_HappyPath_enc.test";
+        String decryptedFileDest = TEST_FOLDER + "/testSigned_HappyPath_dec.test";
+        String encryptedSignedFileDest = TEST_FOLDER + "/testSigned_HappyPath_sign.test";
+
+        OutputStream privateOut = new FileOutputStream(privateKeyDest);
+        OutputStream publicOut = new FileOutputStream(publicKeyDest);
+        PGPUtils.generateKeyPair(privateOut, publicOut, pass);
+
+        OutputStream outputStream = new FileOutputStream(encryptedFileDest);
+        InputStream userPublicKeyStream = new FileInputStream(publicKeyDest);
+        Set<PGPPublicKey> publicKeys = new HashSet<PGPPublicKey>();
+        publicKeys.add(readPublicKey(userPublicKeyStream));
+
+        encrypt(outputStream, clearData, publicKeys);
+        SignedFileProcessor.signFile(
+                encryptedFileDest,
+                new FileInputStream(privateKeyDest),
+                new FileOutputStream(encryptedSignedFileDest),
+                pass,
+                true
+        );
+
+        ByteArrayOutputStream designed;
+        designed = SignedFileProcessor.verifyFile(
+                new ByteArrayInputStream(readContentIntoByteArray(new File(encryptedSignedFileDest))),
+                new FileInputStream(publicKeyDest));
+        decrypt(
+                designed.toByteArray(),
+                readContentIntoByteArray(new File(privateKeyDest)),
+                new FileOutputStream(decryptedFileDest),
+                pass );
+
+        assertNotNull(designed);
+        assertEquals(clearData.length, readContentIntoByteArray(new File(decryptedFileDest)).length);
+        assertEquals(new String(clearData), new String(readContentIntoByteArray(new File(decryptedFileDest))));
     }
 
     @Test
@@ -129,6 +169,24 @@ class SignedFileProcessorTest {
             }
         }
         directoryToBeDeleted.delete();
+    }
+
+    private static byte[] readContentIntoByteArray(File file)
+    {
+        FileInputStream fileInputStream = null;
+        byte[] bFile = new byte[(int) file.length()];
+        try
+        {
+            //convert file into array of bytes
+            fileInputStream = new FileInputStream(file);
+            fileInputStream.read(bFile);
+            fileInputStream.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return bFile;
     }
 
 }

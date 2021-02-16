@@ -1,11 +1,6 @@
 package io.github.nosuchcompany.pgplug.sign;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
@@ -67,6 +62,52 @@ public class SignedFileProcessor {
         out.close();
         PGPSignatureList p3 = (PGPSignatureList) pgpFact.nextObject();
         return ops.verify(p3.get(0));
+    }
+
+
+    /**
+     * Verify that the given file was signed by the owner of the pubKey
+     *
+     * @param inStream    The InputStream of the file that should be signed
+     * @param keyIn The InputStream of the pubKey File
+     * @throws Exception
+     * @return ByteArrayOutputStream
+     */
+    public static ByteArrayOutputStream verifyFile(
+            ByteArrayInputStream inStream,
+            InputStream keyIn)
+            throws Exception {
+        InputStream in = PGPUtil.getDecoderStream(inStream);
+
+        JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(in);
+        PGPCompressedData c1 = (PGPCompressedData) pgpFact.nextObject();
+        pgpFact = new JcaPGPObjectFactory(c1.getDataStream());
+        PGPOnePassSignatureList p1 = (PGPOnePassSignatureList) pgpFact.nextObject();
+        PGPOnePassSignature ops = p1.get(0);
+        PGPLiteralData p2 = (PGPLiteralData) pgpFact.nextObject();
+
+        InputStream dIn = p2.getInputStream();
+        int ch;
+        PGPPublicKeyRingCollection pgpRing = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(keyIn), new JcaKeyFingerprintCalculator());
+        PGPPublicKey key = pgpRing.getPublicKey(ops.getKeyID());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            ops.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), key);
+
+            while ((ch = dIn.read()) >= 0) {
+                ops.update((byte) ch);
+                out.write(ch);
+            }
+        } catch (Exception e) {
+            return null;
+        }
+
+        PGPSignatureList p3 = (PGPSignatureList) pgpFact.nextObject();
+        if(ops.verify(p3.get(0))){
+            return out;
+        };
+
+        return null;
     }
 
     /**

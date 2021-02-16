@@ -4,7 +4,7 @@
 
     <groupId>io.github.no-such-company</groupId>
     <artifactId>pgplug</artifactId>
-    <version>21.4</version>
+    <version>21.5</version>
 
     <developers>
         <developer>
